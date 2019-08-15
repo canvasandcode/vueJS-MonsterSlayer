@@ -3,7 +3,8 @@ new Vue({
 	data: {
 		playerHealth: 100, //starts health at 100
 		monsterHealth: 100,
-		gameIsRunning: false //initially we don't have a running game, we can see if button should be action buttons if true or start new game
+		gameIsRunning: false, //initially we don't have a running game, we can see if button should be action buttons if true or start new game
+		turns: []
 	},
 	methods: {
 		startGame: function() {
@@ -13,7 +14,12 @@ new Vue({
 		},
 
 		attack: function() {
-			this.monsterHealth -= this.calculateDamage(3, 10);
+			var damage = this.calculateDamage(3, 10);
+			this.monsterHealth -= damage;
+			this.turns.unshift({
+				isPlayer: true,
+				text: "Player hits Monster for " + damage
+			});
 			//check if player won and end the function
 			if (this.checkWin()) {
 				return;
@@ -48,9 +54,14 @@ new Vue({
 		},
 
 		monsterAttacks: function() {
-			this.playerHealth -= this.calculateDamage(5, 12);
+			var damage = this.calculateDamage(5, 12);
+			this.playerHealth -= damage;
 			//check if player lost and end the function
 			this.checkWin();
+			this.turns.unshift({
+				isPlayer: false,
+				text: "Monster hits Player for " + damage
+			});
 		},
 
 		calculateDamage: function(min, max) {
